@@ -1,33 +1,79 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
-const apiURL string = "https://slack.com/api/"
+// Files contains the list of files we want to clean
+type Files struct {
+	FileList []File `json:"files"`
+}
+
+// File is an individual file we wish to remove from Slack
+type File struct {
+	ID string `json:"id"`
+}
 
 func main() {
-	token := os.Getenv("SLACK_API_TOKEN")
 
-	fmt.Println(token)
-
-	response, err := http.Get(apiURL + "files.list?token=" + token)
+	req, err := http.NewRequest("GET", "https://slack.com/api/files.list", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer response.Body.Close()
 
-	fmt.Println(response.Body)
+	tsNow := time.Now()
+	tsTo := tsNow.AddDate(0, -14, 0)
+	tsUnix := tsTo.Unix()
 
-}
+	q := req.URL.Query()
+	q.Add("token", os.Getenv("SLACK_API_TOKEN"))
+	q.Add("ts_to", fmt.Sprint(tsUnix))
+	q.Add("count", "1000")
+	req.URL.RawQuery = q.Encode()
 
-func listFiles() {
+	httpClient := &http.Client{}
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-}
+	var files Files
+	if err := json.Unmarshal(content, &files); err != nil {
+		log.Fatal(err)
+	}
 
-func deleteFiles() {
+	for _, file := range files.FileList {
+		req, err := http.NewRequest("GET", "https://slack.com/api/files.delete", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		q := req.URL.Query()
+		q.Add("token", os.Getenv("SLACK_API_TOKEN"))
+		q.Add("file", file.ID)
+		req.URL.RawQuery = q.Encode()
+
+		httpClient := &http.Client{}
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		_, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println(err)
+		}
+
+		fmt.Println("File", file.ID, "successfully deleted")
+	}
 
 }
