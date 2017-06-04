@@ -19,7 +19,7 @@ We assume your $GOPATH/bin folder is in your PATH.
 
     $ slack-cleanup
 
-Slack cleanup will delete any files older the the past 2 weeks.
+Slack cleanup will delete any files older than the past 2 weeks.
 
 ## Future Improvements
 
