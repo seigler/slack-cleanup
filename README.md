@@ -16,3 +16,11 @@ variables. At MadeComfy we use [Direnv](https://direnv.net/) to manage local env
 ## Running Slack Cleanup
 
     slack-cleanup
+
+Slack cleanup will delete any files older the the past 2 weeks.
+
+## Future Improvements
+
+- S3 backups of old files
+- Configurable time periods
+- Lamba installation
