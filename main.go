@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-// Files contains the list of files we want to clean
+// Files contains the list of files we want to delete
 type Files struct {
 	FileList []File `json:"files"`
 }
 
-// File is an individual file we wish to remove from Slack
+// File is an individual file we wish to delete from Slack
 type File struct {
 	ID string `json:"id"`
 }
@@ -52,6 +52,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	count := 0
 	for _, file := range files.FileList {
 		req, err := http.NewRequest("GET", "https://slack.com/api/files.delete", nil)
 		if err != nil {
@@ -66,7 +67,7 @@ func main() {
 		httpClient := &http.Client{}
 		resp, err := httpClient.Do(req)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		_, err = ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -74,6 +75,8 @@ func main() {
 		}
 
 		fmt.Println("File", file.ID, "successfully deleted")
+		count++
 	}
 
+	fmt.Println("Fin.", count, "files successfully deleted")
 }

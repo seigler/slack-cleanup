@@ -6,7 +6,11 @@ A program for cleaning up slack files to free up space.
 
 ## Setup
 
-You will need to generate an API token that has permission to delete files. If you do not have administrator
-privileges you will only be able to delete your own files. Generate an API token at the following link:
+Install Slack Cleanup
 
-[Legacy Tokens](https://api.slack.com/custom-integrations/legacy-tokens)
+    go get github.com/madecomfy/slack-cleanup
+
+You will need to generate an API token that has permission to delete files. Add this token to your environment
+variables (we use Direnv to manage env vars).
+
+    export SLACK_API_TOKEN=xoxp-111111-1111111-1111111-1111111-111111
