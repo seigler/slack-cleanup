@@ -28,7 +28,7 @@ func main() {
 	}
 
 	tsNow := time.Now()
-	tsTo := tsNow.AddDate(0, -14, 0)
+	tsTo := tsNow.AddDate(0, -90, 0)
 	tsUnix := tsTo.Unix()
 
 	q := req.URL.Query()
